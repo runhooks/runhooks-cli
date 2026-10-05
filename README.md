@@ -1,7 +1,5 @@
 # @runhooks/cli
 
-> **Note:** This repository is an automated, read-only mirror of the `@runhooks/cli` package. Source of truth lives in the private Runhooks monorepo; changes here are overwritten on each release. File bugs and feature requests in Issues.
-
 Command-line interface for [Runhooks](https://runhooks.app) — reliable HTTP scheduling infrastructure.
 
 Schedule webhooks in seconds. Never lose a webhook again.
