@@ -31,7 +31,7 @@ const program = new Command();
 program
   .name('runhooks')
   .description('Runhooks CLI — reliable HTTP scheduling infrastructure')
-  .version('0.1.2');
+  .version('0.1.3');
 
 // --- Auth ---
 
@@ -89,7 +89,8 @@ program
   .option('-t, --timeout <duration>', 'Request timeout (e.g. 30s, 60s)', '30s')
   .option('--cron <expression>', 'Cron expression (e.g. "*/5 * * * *")')
   .option('--interval <duration>', 'Interval duration (e.g. 30s, 5m, 1h)')
-  .option('--timezone <tz>', 'IANA timezone (only for cron schedules)')
+  .option('--at <datetime>', 'Run once at an ISO-8601 date-time (e.g. "2026-12-25T14:00:00Z")')
+  .option('--timezone <tz>', 'IANA timezone (for cron, or a naive --at wall-clock time)')
   .option(
     '--tag <tag>',
     'Tag (repeatable)',
@@ -136,6 +137,7 @@ program
   .option('-t, --timeout <duration>', 'Request timeout')
   .option('--cron <expression>', 'Cron expression')
   .option('--interval <duration>', 'Interval duration')
+  .option('--at <datetime>', 'Run once at an ISO-8601 date-time (e.g. "2026-12-25T14:00:00Z")')
   .option('--timezone <tz>', 'IANA timezone')
   .option(
     '--tag <tag>',

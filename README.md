@@ -240,7 +240,7 @@ The new key is saved to your config automatically.
 
 ### `runhooks create`
 
-Create a new scheduled job. You **must** provide either `--cron` or `--interval` (not both).
+Create a new scheduled job. You **must** provide exactly one of `--cron`, `--interval`, or `--at` (a single future run).
 
 | Option | Short | Description | Default |
 |---|---|---|---|
@@ -253,7 +253,8 @@ Create a new scheduled job. You **must** provide either `--cron` or `--interval`
 | `--timeout <duration>` | `-t` | Request timeout (e.g. `30s`, `60s`, `5m`) | `30s` |
 | `--cron <expression>` | | Cron expression (e.g. `"*/5 * * * *"`) | — |
 | `--interval <duration>` | | Interval duration (e.g. `30s`, `5m`, `1h`, `2d`) | — |
-| `--timezone <tz>` | | IANA timezone (only for cron schedules, e.g. `America/New_York`) | — |
+| `--at <datetime>` | | Run once at an ISO-8601 date-time (e.g. `"2026-12-25T14:00:00Z"`, or a naive `"2026-12-25T09:00:00"` with `--timezone`) | — |
+| `--timezone <tz>` | | IANA timezone (for cron, or a naive `--at` wall-clock time, e.g. `America/New_York`) | — |
 | `--tag <tag>` | | Tag to attach. Repeatable. | — |
 | `--max-retries <n>` | | Max retry attempts on failure | `3` |
 | `--initial-delay <duration>` | | Initial retry delay | `1s` |
@@ -270,6 +271,12 @@ runhooks create -n "Refresh cache" \
 
 # Interval-scheduled GET with tags
 runhooks create -n "Healthcheck" -u https://api.example.com/health --interval 30s --tag prod --tag healthcheck
+
+# One-off: run once at an absolute instant (UTC)
+runhooks create -n "Black Friday warm-up" -u https://api.example.com/warm-up -m POST --at "2026-11-27T13:00:00Z"
+
+# One-off: a local wall-clock time in a specific timezone
+runhooks create -n "Reminder" -u https://api.example.com/remind --at "2026-12-25T09:00:00" --timezone "America/New_York"
 
 # Output as JSON for piping
 runhooks create -n "Test job" -u https://example.com --interval 1m --json
@@ -329,6 +336,7 @@ Update an existing job. Only the flags you provide are changed — everything el
 | `--timeout <duration>` | `-t` | Request timeout |
 | `--cron <expression>` | | Cron expression |
 | `--interval <duration>` | | Interval duration |
+| `--at <datetime>` | | Run once at an ISO-8601 date-time |
 | `--timezone <tz>` | | IANA timezone |
 | `--tag <tag>` | | Tags (replaces all existing tags) |
 | `--max-retries <n>` | | Max retry attempts |

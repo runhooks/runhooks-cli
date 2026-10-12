@@ -14,6 +14,7 @@ export interface CreateOptions {
   timeout?: string;
   cron?: string;
   interval?: string;
+  at?: string;
   timezone?: string;
   tag?: string[];
   maxRetries?: string;
@@ -24,12 +25,13 @@ export interface CreateOptions {
 const VALID_METHODS: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
 
 export async function createCommand(options: CreateOptions): Promise<void> {
-  if (!options.cron && !options.interval) {
-    error('You must provide either --cron or --interval.');
+  const scheduleCount = [options.cron, options.interval, options.at].filter(Boolean).length;
+  if (scheduleCount === 0) {
+    error('You must provide one of --cron, --interval, or --at.');
     process.exit(1);
   }
-  if (options.cron && options.interval) {
-    error('Provide only one of --cron or --interval, not both.');
+  if (scheduleCount > 1) {
+    error('Provide only one of --cron, --interval, or --at.');
     process.exit(1);
   }
 
@@ -52,7 +54,9 @@ export async function createCommand(options: CreateOptions): Promise<void> {
     description: options.description,
     schedule: options.cron
       ? { type: 'cron', expression: options.cron, timezone: options.timezone }
-      : { type: 'interval', expression: String(parseDuration(options.interval as string)) },
+      : options.at
+        ? { type: 'once', expression: options.at, timezone: options.timezone }
+        : { type: 'interval', expression: String(parseDuration(options.interval as string)) },
     httpConfig: {
       url: options.url,
       method,

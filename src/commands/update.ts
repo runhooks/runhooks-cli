@@ -14,6 +14,7 @@ export interface UpdateOptions {
   timeout?: string;
   cron?: string;
   interval?: string;
+  at?: string;
   timezone?: string;
   tag?: string[];
   maxRetries?: string;
@@ -25,8 +26,8 @@ export interface UpdateOptions {
 const VALID_METHODS: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
 
 export async function updateCommand(id: string, options: UpdateOptions): Promise<void> {
-  if (options.cron && options.interval) {
-    error('Provide only one of --cron or --interval, not both.');
+  if ([options.cron, options.interval, options.at].filter(Boolean).length > 1) {
+    error('Provide only one of --cron, --interval, or --at.');
     process.exit(1);
   }
 
@@ -59,6 +60,8 @@ export async function updateCommand(id: string, options: UpdateOptions): Promise
     input.schedule = { type: 'cron', expression: options.cron, timezone: options.timezone };
   } else if (options.interval) {
     input.schedule = { type: 'interval', expression: String(parseDuration(options.interval)) };
+  } else if (options.at) {
+    input.schedule = { type: 'once', expression: options.at, timezone: options.timezone };
   }
 
   if (options.url || options.method || headers || options.body !== undefined || options.timeout) {

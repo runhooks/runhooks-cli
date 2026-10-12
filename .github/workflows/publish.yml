@@ -18,6 +18,9 @@ on:
   push:
     tags:
       - 'v*'
+  # Manual re-trigger from the Actions tab. Publishes whatever version is in
+  # package.json on the selected ref (skips if that version is already on npm).
+  workflow_dispatch: {}
 
 permissions:
   contents: read
