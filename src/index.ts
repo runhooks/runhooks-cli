@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createRequire } from 'node:module';
 import { Command } from 'commander';
 import { initCommand } from './commands/init.js';
 import { loginCommand } from './commands/login.js';
@@ -26,12 +27,18 @@ import { templateListCommand, templateUseCommand } from './commands/template.js'
 import { usageCommand } from './commands/usage.js';
 import { error } from './utils/output.js';
 
+// Single source of truth for the version: package.json. Read at runtime so the
+// number never has to be duplicated here. The path resolves to the package root
+// both in dev (tsx src/index.ts) and when bundled (dist/index.js) — each sits one
+// level under the package root — and package.json always ships in the npm tarball.
+const { version } = createRequire(import.meta.url)('../package.json') as { version: string };
+
 const program = new Command();
 
 program
   .name('runhooks')
   .description('Runhooks CLI — reliable HTTP scheduling infrastructure')
-  .version('0.1.3');
+  .version(version);
 
 // --- Auth ---
 
